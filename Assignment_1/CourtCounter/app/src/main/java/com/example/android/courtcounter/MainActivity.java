@@ -15,12 +15,14 @@
  */
 package com.example.android.courtcounter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * This activity keeps track of the basketball score for 2 teams.
@@ -62,6 +64,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        showToastMessage("Thank you for choosing CourtCounter");
     }
 
     /**
@@ -136,5 +144,20 @@ public class MainActivity extends AppCompatActivity {
     public void displayForTeamB(int score) {
         TextView scoreView = (TextView) findViewById(R.id.team_b_score);
         scoreView.setText(String.valueOf(score));
+    }
+
+    /**
+     * Displays a message as a toeas message to the user
+     * @param message The message to be shown in the toast
+     */
+    private void showToastMessage(String message){
+        // Get the current app context
+        Context current = getApplicationContext();
+
+        // Creating the toat
+        Toast toast = Toast.makeText(current, message, Toast.LENGTH_SHORT);
+
+        // Actually show the message
+        toast.show();
     }
 }
