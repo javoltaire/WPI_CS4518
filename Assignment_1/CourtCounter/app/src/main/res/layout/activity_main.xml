@@ -20,15 +20,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
-        android:onClick="resetScore"
-        android:text="Reset" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,15 +34,31 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:padding="16dp"
-                android:text="Team A"
-                android:textColor="#616161"
-                android:textSize="14sp" />
+                android:layout_height="100dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <EditText
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="textPersonName"
+                    android:hint="Team A"
+                    android:ems="10"
+                    android:id="@+id/team_a_editText" />
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/celtics"
+                    android:id="@+id/imageView" />
+
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/team_a_score"
@@ -71,7 +78,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:onClick="addThreeForTeamA"
-                android:text="+3 Points" />
+                android:text="@string/three_points" />
 
             <Button
                 android:layout_width="match_parent"
@@ -80,7 +87,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:onClick="addTwoForTeamA"
-                android:text="+2 Points" />
+                android:text="@string/two_points" />
 
             <Button
                 android:layout_width="match_parent"
@@ -89,7 +96,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:onClick="addOneForTeamA"
-                android:text="Free throw" />
+                android:text="@string/free_throw" />
         </LinearLayout>
 
         <View
@@ -104,15 +111,32 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:padding="16dp"
-                android:text="Team B"
-                android:textColor="#616161"
-                android:textSize="14sp" />
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:weightSum="2">
+
+                <EditText
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inputType="textPersonName"
+                    android:hint="Team B"
+                    android:ems="10"
+                    android:id="@+id/team_b_editText" />
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/lakers"
+                    android:id="@+id/team_a_imageView" />
+
+            </LinearLayout>
+
+
 
             <TextView
                 android:id="@+id/team_b_score"
@@ -132,7 +156,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:onClick="addThreeForTeamB"
-                android:text="+3 Points" />
+                android:text="@string/three_points" />
 
             <Button
                 android:layout_width="match_parent"
@@ -141,7 +165,7 @@
                 android:layout_marginLeft="22dp"
                 android:layout_marginRight="22dp"
                 android:onClick="addTwoForTeamB"
-                android:text="+2 Points" />
+                android:text="@string/two_points" />
 
             <Button
                 android:layout_width="match_parent"
@@ -150,8 +174,34 @@
                 android:layout_marginLeft="22dp"
                 android:layout_marginRight="22dp"
                 android:onClick="addOneForTeamB"
-                android:text="Free throw" />
+                android:text="@string/free_throw" />
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="resetScore"
+            android:text="@string/reset"
+            android:id="@+id/resetButton" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="sendScore"
+            android:text="@string/send"
+            android:id="@+id/sendButton" />
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>

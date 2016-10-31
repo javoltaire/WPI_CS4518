@@ -15,33 +15,77 @@
  */
 package com.example.android.courtcounter;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  * This activity keeps track of the basketball score for 2 teams.
  */
 public class MainActivity extends AppCompatActivity {
 
-    // Tracks the score for Team A
+    //region CONSTANTS
+    /**
+     * Key for storing and retrieving the score for team a in the Bundle
+     */
+    private final String TEAM_A_SCORE_KEY = "TEAM_A_SCORE";
+
+    /**
+     * Key for storing and retrieving the score for team b in the Bundle
+     */
+    private final String TEAM_B_SCORE_KEY = "TEAM_B_SCORE";
+
+    /**
+     * Permission to be checked when needed to get user's account information
+     */
+    private final String GET_ACCOUNT_PERMISSION = "android.permission.GET_ACCOUNTS";
+    //endregion
+
+    //region Variables
+    /**
+     * Tracks the score for Team A
+     */
     int scoreTeamA = 0;
 
-    // Tracks the score for Team B
+    /**
+     * Tracks the score for Team B
+     */
     int scoreTeamB = 0;
 
+    /**
+     * Stores the current application Context instace
+     */
+    Context currentContext;
+    //endregion
+
+    //region Overridden Activity Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Setting the current application context
+        currentContext = getApplicationContext();
+
         String jamesbond = "hi";
         String jamesBond = "hello";
         String s = jamesBond + jamesbond;
+        showToastMessage("Thank you for choosing CourtCounter");
     }
 
     @Override
@@ -67,10 +111,112 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        showToastMessage("Thank you for choosing CourtCounter");
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Retrieving the saved score
+        scoreTeamA = savedInstanceState.getInt(TEAM_A_SCORE_KEY);
+        scoreTeamB = savedInstanceState.getInt(TEAM_B_SCORE_KEY);
+
+        // Updating the view
+        displayForTeamA(scoreTeamA);
+        displayForTeamB(scoreTeamB);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Saving the data
+        outState.putInt(TEAM_A_SCORE_KEY, scoreTeamA);
+        outState.putInt(TEAM_B_SCORE_KEY, scoreTeamB);
+    }
+    //endregion
+
+    //region Event Listeners
+    /**
+     * Resets the score for both teams back to 0.
+     */
+    public void resetScore(View v) {
+        scoreTeamA = 0;
+        scoreTeamB = 0;
+        displayForTeamA(scoreTeamA);
+        displayForTeamB(scoreTeamB);
+    }
+
+    /**
+     * Lets the user choose an email app and sends an email with the current scores
+     */
+    public void sendScore(View v) {
+        // Grabbing the team names
+        String teamA = getEditTextContent(R.id.team_a_editText);
+        String teamB = getEditTextContent(R.id.team_b_editText);
+
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, formatEmailSubject(teamA, teamB));
+        emailIntent.putExtra(Intent.EXTRA_TEXT, formatEmailBody(teamA, teamB));
+        emailIntent.setType("message/rfc822");
+
+        startActivity(Intent.createChooser(emailIntent, "Send Scores"));
+
+    }
+    //endregion
+
+    //region private Methods
+    /**
+     * Displays a message as a toeas message to the user
+     * @param message The message to be shown in the toast
+     */
+    private void showToastMessage(String message){
+        // Creating the toat
+        Toast toast = Toast.makeText(currentContext, message, Toast.LENGTH_SHORT);
+
+        // Actually show the message
+        toast.show();
+    }
+
+    private String formatEmailSubject(String teamA, String teamB){
+        return "Scores for Team: " + teamA + " and Team: " + teamB;
+    }
+
+    private String formatEmailBody(String teamA, String teamB){
+        String newLine = "\n";
+
+        // String builder to hold the formated body of the email
+        StringBuilder formattedEmailBody = new StringBuilder();
+
+        formattedEmailBody.append("Winning Team: ");
+
+        // Determining the winning team
+        String winning;
+        if(scoreTeamA > scoreTeamB)
+            winning = teamA;
+        else if(scoreTeamB > scoreTeamA)
+            winning = teamB;
+        else
+            winning = "Tie";
+        formattedEmailBody.append(winning + newLine);
+        formattedEmailBody.append("Team A: team " + teamA + " has: " + scoreTeamA + newLine);
+        formattedEmailBody.append("Team B: team " + teamB + " has: " + scoreTeamB + newLine);
+
+        return formattedEmailBody.toString();
+
+    }
+
+    private String getEditTextContent(int editTextId){
+        try{
+            EditText teamBNameEditText = (EditText) findViewById(editTextId);
+            return teamBNameEditText.getText().toString();
+        }
+        catch (ClassCastException e){
+            e.printStackTrace();
+        }
+        return "";
+    }
+    //endregion
+
+
 
     /**
      * Increase the score for Team A by 1 point.
@@ -120,15 +266,7 @@ public class MainActivity extends AppCompatActivity {
         displayForTeamB(scoreTeamB);
     }
 
-    /**
-     * Resets the score for both teams back to 0.
-     */
-    public void resetScore(View v) {
-        scoreTeamA = 0;
-        scoreTeamB = 0;
-        displayForTeamA(scoreTeamA);
-        displayForTeamB(scoreTeamB);
-    }
+
 
     /**
      * Displays the given score for Team A.
@@ -146,18 +284,5 @@ public class MainActivity extends AppCompatActivity {
         scoreView.setText(String.valueOf(score));
     }
 
-    /**
-     * Displays a message as a toeas message to the user
-     * @param message The message to be shown in the toast
-     */
-    private void showToastMessage(String message){
-        // Get the current app context
-        Context current = getApplicationContext();
 
-        // Creating the toat
-        Toast toast = Toast.makeText(current, message, Toast.LENGTH_SHORT);
-
-        // Actually show the message
-        toast.show();
-    }
 }

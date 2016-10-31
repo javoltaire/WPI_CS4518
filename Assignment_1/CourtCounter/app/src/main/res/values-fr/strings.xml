@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cour contre</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="two_points">+2 Points</string>
+    <string name="three_points">+3 Points</string>
+    <string name="free_throw">Lancer franc</string>
+    <string name="reset">Réinitialiser</string>
+    <string name="send">Envoyer</string>
+</resources>
