@@ -34,6 +34,7 @@ import android.widget.Toast;
 /**
  * This activity keeps track of the basketball score for 2 teams.
  * Tutorial on how to load an image: http://viralpatel.net/blogs/pick-image-from-galary-android-app/
+ * Jules Voltaire - javoltaire
  */
 public class MainActivity extends AppCompatActivity {
 
