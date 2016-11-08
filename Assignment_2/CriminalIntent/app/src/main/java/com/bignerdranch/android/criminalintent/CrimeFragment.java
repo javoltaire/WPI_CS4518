@@ -27,13 +27,16 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
 
+    //region Constants
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
 
@@ -64,10 +67,9 @@ public class CrimeFragment extends Fragment {
      * index form when determining where the next captured picture should go
      */
     private final int IMAGE_CONTAINER_LAST = 2;
+    //endregion
 
-
-    private Crime mCrime;
-    private File mPhotoFile;
+    //region UI instances
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckbox;
@@ -75,12 +77,15 @@ public class CrimeFragment extends Fragment {
     private Button mSuspectButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
-
     /**
      * A GridView that will hold the crime pictures
      */
     private GridView crimeImageContainer;
+    //endregion
 
+    //region variables
+    private Crime mCrime;
+    private File mPhotoFile;
     /**
      * This integer will hold the next location that the picture should be added.
      * It will tell whether the image should be added to the top left image view
@@ -93,15 +98,13 @@ public class CrimeFragment extends Fragment {
      */
     private int imageLocationIndex = IMAGE_TOP_LEFT;
 
-    public static CrimeFragment newInstance(UUID crimeId) {
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_CRIME_ID, crimeId);
+    /**
+     * List that will hold all images contained in the grid view only
+     */
+    private ArrayList<Bitmap> images = new ArrayList<>();
+    //endregion
 
-        CrimeFragment fragment = new CrimeFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    //region Overridden Activity Listeners
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -221,8 +224,8 @@ public class CrimeFragment extends Fragment {
         // Get an instance of the container that will hold all the crime pictures
         crimeImageContainer = (GridView) v.findViewById(R.id.crime_image_container);
 
-        updatePhotoView();
-
+//        updatePhotoView();
+        addImage();
         return v;
     }
 
@@ -267,8 +270,20 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
-            updatePhotoView();
+            addImage();
+//            updatePhotoView();
         }
+    }
+    //endregion
+
+    //region Helper Methods
+    public static CrimeFragment newInstance(UUID crimeId) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_CRIME_ID, crimeId);
+
+        CrimeFragment fragment = new CrimeFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     private void updateDate() {
@@ -294,32 +309,11 @@ public class CrimeFragment extends Fragment {
                 mCrime.getTitle(), dateString, solvedString, suspect);
         return report;
     }
-
-    private void updatePhotoView() {
-        if (mPhotoFile == null || !mPhotoFile.exists()) {
-            mPhotoView.setImageDrawable(null);
-        } else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-            mPhotoView.setImageBitmap(bitmap);
-        }
-    }
+    //endregion
 
 
 
 
-
-
-
-
-
-    private void updatePhotoView() {
-        if (mPhotoFile == null || !mPhotoFile.exists()) {
-            mPhotoView.setImageDrawable(null);
-        } else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-            mPhotoView.setImageBitmap(bitmap);
-        }
-    }
 
 
 
@@ -331,11 +325,43 @@ public class CrimeFragment extends Fragment {
      * in the list view as extra crime photos
      */
     private void addImage(){
+        if(mPhotoFile == null || !mPhotoFile.exists()){
+            Toast.makeText(getContext(), "Photo file is null or does not exist", Toast.LENGTH_LONG);
+        }
+        else{
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
+
         switch (imageLocationIndex){
             case IMAGE_TOP_LEFT:
         }
 
     }
+
+
+    private void updatePhotoView1(Bitmap bitmap){
+        mPhotoView.setImageBitmap(bitmap);
+        imageLocationIndex++
+    }
+
+
+
+
+
+
+
+
+
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
+    }
+
 
     private int incrementImageLocationIndex(){
         if(imageLocationIndex == IMAGE_CONTAINER_LAST)
