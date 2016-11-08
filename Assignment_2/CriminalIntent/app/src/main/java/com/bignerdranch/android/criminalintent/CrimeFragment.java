@@ -23,8 +23,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.File;
 import java.util.Date;
@@ -39,6 +41,31 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_CONTACT = 1;
     private static final int REQUEST_PHOTO= 2;
 
+    /**
+     * Represents the top left image view in index form when determining where the next
+     * captured picture should go
+     */
+    private final int IMAGE_TOP_LEFT = -1;
+
+    /**
+     * Represents the left most image view in the linear layout that contains extra images in
+     * index form when determining where the next captured picture should go
+     */
+    private final int IMAGE_CONTAINER_FIRST = 0;
+
+    /**
+     * Represents the middle image view in the linear layout that contains extra images in
+     * index form when determining where the next captured picture should go
+     */
+    private final int IMAGE_CONTAINER_MIDDLE = 1;
+
+    /**
+     * Represents the right most image view in the linear layout that contains extra images in
+     * index form when determining where the next captured picture should go
+     */
+    private final int IMAGE_CONTAINER_LAST = 2;
+
+
     private Crime mCrime;
     private File mPhotoFile;
     private EditText mTitleField;
@@ -48,6 +75,23 @@ public class CrimeFragment extends Fragment {
     private Button mSuspectButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+
+    /**
+     * A GridView that will hold the crime pictures
+     */
+    private GridView crimeImageContainer;
+
+    /**
+     * This integer will hold the next location that the picture should be added.
+     * It will tell whether the image should be added to the top left image view
+     * or at some index in the crimeImageContainer LinearLayout.
+     * -1 - top left
+     * 0 - index 0 in the linear layout container
+     * 1 - index 1 in the linear layout container
+     * 2 - index 2 in the linear layout container
+     * At the start, we will start with the image view in the top left
+     */
+    private int imageLocationIndex = IMAGE_TOP_LEFT;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -173,6 +217,10 @@ public class CrimeFragment extends Fragment {
         });
 
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+
+        // Get an instance of the container that will hold all the crime pictures
+        crimeImageContainer = (GridView) v.findViewById(R.id.crime_image_container);
+
         updatePhotoView();
 
         return v;
@@ -251,13 +299,49 @@ public class CrimeFragment extends Fragment {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);
         } else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(
-                    mPhotoFile.getPath(), getActivity());
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
             mPhotoView.setImageBitmap(bitmap);
         }
     }
 
-    private void addExtraImage(){
-        
+
+
+
+
+
+
+
+
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
+    }
+
+
+
+
+
+
+    /**
+     * Adds an image to the proper location, it could be the upper left corner image view or
+     * in the list view as extra crime photos
+     */
+    private void addImage(){
+        switch (imageLocationIndex){
+            case IMAGE_TOP_LEFT:
+        }
+
+    }
+
+    private int incrementImageLocationIndex(){
+        if(imageLocationIndex == IMAGE_CONTAINER_LAST)
+            imageLocationIndex = IMAGE_TOP_LEFT;
+        else
+            imageLocationIndex++;
+        return imageLocationIndex;
     }
 }
