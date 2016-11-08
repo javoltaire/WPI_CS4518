@@ -256,4 +256,8 @@ public class CrimeFragment extends Fragment {
             mPhotoView.setImageBitmap(bitmap);
         }
     }
+
+    private void addExtraImage(){
+        
+    }
 }
