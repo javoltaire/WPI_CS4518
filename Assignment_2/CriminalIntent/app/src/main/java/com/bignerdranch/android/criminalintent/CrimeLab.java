@@ -75,7 +75,13 @@ public class CrimeLab {
         }
     }
 
-    public File getPhotoFile(Crime crime) {
+    /**
+     * Grabs one of the images associated for a given crime
+     * @param crime The crime for which, this method needs to get the picture for
+     * @param index The index that identifies which picture to get.
+     * @return The picture if it exits, otherwise null;
+     */
+    public File getPhotoFile(Crime crime, int index) {
         File externalFilesDir = mContext
                 .getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -83,7 +89,7 @@ public class CrimeLab {
             return null;
         }
 
-        return new File(externalFilesDir, crime.getPhotoFilename());
+        return new File(externalFilesDir, crime.getPhotoFilename(index));
     }
 
     public void updateCrime(Crime crime) {

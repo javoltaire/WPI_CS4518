@@ -26,7 +26,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -67,6 +66,11 @@ public class CrimeFragment extends Fragment {
      * index form when determining where the next captured picture should go
      */
     private final int IMAGE_CONTAINER_LAST = 2;
+
+    /**
+     * The maximum number of pictures allowed for a crime report
+     */
+    private final int MAX_NUM_IMAGES = 4;
     //endregion
 
     //region UI instances
@@ -106,7 +110,7 @@ public class CrimeFragment extends Fragment {
     /**
      * Adapter instance to be used for the image gridview.
      */
-    CrimeImageAdapter imageGriveViewAdapter;
+    CrimeImageAdapter imageGridViewAdapter;
     //endregion
 
     //region Overridden Activity Listeners
@@ -115,13 +119,12 @@ public class CrimeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
-        mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
+        mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime, imageLocationIndex);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         CrimeLab.get(getActivity())
                 .updateCrime(mCrime);
     }
@@ -228,11 +231,11 @@ public class CrimeFragment extends Fragment {
 
         // Get an instance of the container that will hold all the crime pictures
         crimeImageContainer = (GridView) v.findViewById(R.id.crime_image_container);
-        imageGriveViewAdapter = new CrimeImageAdapter(getContext(), R.layout.item_crime_image, images);
-        crimeImageContainer.setAdapter(imageGriveViewAdapter);
+        imageGridViewAdapter = new CrimeImageAdapter(getContext(), R.layout.item_crime_image, images);
+        crimeImageContainer.setAdapter(imageGridViewAdapter);
 
 //        updatePhotoView();
-        addImage();
+        showSavedPictures();
         return v;
     }
 
@@ -277,7 +280,7 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
-            addImage();
+            showNewImage();
 //            updatePhotoView();
         }
     }
@@ -326,25 +329,40 @@ public class CrimeFragment extends Fragment {
 
 
 
-    /**
-     * Adds an image to the proper location, it could be the upper left corner image view or
-     * in the list view as extra crime photos
-     */
-    private void addImage(){
+    private void showSavedPictures(){
+        while(mPhotoFile != null && mPhotoFile.exists()){
+            displayImage(mPhotoFile);
+            mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime, imageLocationIndex);
+        }
+    }
+
+    private void showNewImage(){
         if(mPhotoFile == null || !mPhotoFile.exists()){
             Toast.makeText(getContext(), "Photo file is null or does not exist", Toast.LENGTH_LONG);
         }
         else{
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-            if(imageLocationIndex == IMAGE_TOP_LEFT){
-                mPhotoView.setImageBitmap(bitmap);
-            }
-            else{
-                images.add(imageLocationIndex, bitmap);
-                imageGriveViewAdapter.notifyDataSetChanged();
-            }
-            incrementImageLocationIndex();
+            displayImage(mPhotoFile);
+            mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime, imageLocationIndex);
         }
+    }
+
+    /**
+     * Converts a file to a bitmap and either sets it as the image for the top left imageView
+     * or adds it to the list of bitmaps to be displayed as extra image depending
+     * on the imageLocationIndex
+     * @param imageLocation The file object containing the image
+     */
+    private void displayImage(File imageLocation){
+        Bitmap bitmap = PictureUtils.getScaledBitmap(imageLocation.getPath(), getActivity());
+        if(imageLocationIndex == IMAGE_TOP_LEFT){
+            mPhotoView.setImageBitmap(bitmap);
+        }
+        else{
+            images.add(imageLocationIndex, bitmap);
+            imageGridViewAdapter.notifyDataSetChanged();
+        }
+        incrementImageLocationIndex();
+
     }
 
     /**
@@ -356,6 +374,35 @@ public class CrimeFragment extends Fragment {
         else
             imageLocationIndex++;
     }
+
+
+
+
+
+    /**
+     * Adds an image to the proper location, it could be the upper left corner image view or
+     * in the list view as extra crime photos
+     */
+//    private void addImage(){
+//        if(mPhotoFile == null || !mPhotoFile.exists()){
+//            Toast.makeText(getContext(), "Photo file is null or does not exist", Toast.LENGTH_LONG);
+//        }
+//        else{
+//            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+//            if(imageLocationIndex == IMAGE_TOP_LEFT){
+//                mPhotoView.setImageBitmap(bitmap);
+//            }
+//            else{
+//                images.add(imageLocationIndex, bitmap);
+//                imageGridViewAdapter.notifyDataSetChanged();
+//            }
+//            incrementImageLocationIndex();
+//        }
+//    }
+
+
+
+
 
 
 

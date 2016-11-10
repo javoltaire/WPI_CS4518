@@ -55,7 +55,12 @@ public class Crime {
         mSuspect = suspect;
     }
 
-    public String getPhotoFilename() {
-        return "IMG_" + getId().toString() + ".jpg";
+    /**
+     * Generates the name for a picture file based on an index
+     * @param index The index for the picture since the crime may have many pictures
+     * @return A generated string of the name of the indexed picture
+     */
+    public String getPhotoFilename(int index) {
+        return "IMG_" + getId().toString() + "_" + index + ".jpg";
     }
 }
