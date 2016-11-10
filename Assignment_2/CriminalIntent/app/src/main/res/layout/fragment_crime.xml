@@ -37,17 +37,18 @@
         android:text="@string/crime_report_text"
         />
 
-    <GridView
-        android:id="@+id/crime_image_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </GridView>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/crime_details_label"
         style="?android:listSeparatorTextViewStyle"/>
+
+    <GridView
+        android:id="@+id/crime_image_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="3">
+
+    </GridView>
 
 </LinearLayout>

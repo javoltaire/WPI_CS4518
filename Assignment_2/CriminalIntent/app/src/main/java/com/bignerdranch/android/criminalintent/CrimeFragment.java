@@ -102,6 +102,11 @@ public class CrimeFragment extends Fragment {
      * List that will hold all images contained in the grid view only
      */
     private ArrayList<Bitmap> images = new ArrayList<>();
+
+    /**
+     * Adapter instance to be used for the image gridview.
+     */
+    CrimeImageAdapter imageGriveViewAdapter;
     //endregion
 
     //region Overridden Activity Listeners
@@ -223,6 +228,8 @@ public class CrimeFragment extends Fragment {
 
         // Get an instance of the container that will hold all the crime pictures
         crimeImageContainer = (GridView) v.findViewById(R.id.crime_image_container);
+        imageGriveViewAdapter = new CrimeImageAdapter(getContext(), R.layout.item_crime_image, images);
+        crimeImageContainer.setAdapter(imageGriveViewAdapter);
 
 //        updatePhotoView();
         addImage();
@@ -319,7 +326,6 @@ public class CrimeFragment extends Fragment {
 
 
 
-
     /**
      * Adds an image to the proper location, it could be the upper left corner image view or
      * in the list view as extra crime photos
@@ -330,44 +336,41 @@ public class CrimeFragment extends Fragment {
         }
         else{
             Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-            mPhotoView.setImageBitmap(bitmap);
-        }
-
-        switch (imageLocationIndex){
-            case IMAGE_TOP_LEFT:
-        }
-
-    }
-
-
-    private void updatePhotoView1(Bitmap bitmap){
-        mPhotoView.setImageBitmap(bitmap);
-        imageLocationIndex++
-    }
-
-
-
-
-
-
-
-
-
-    private void updatePhotoView() {
-        if (mPhotoFile == null || !mPhotoFile.exists()) {
-            mPhotoView.setImageDrawable(null);
-        } else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
-            mPhotoView.setImageBitmap(bitmap);
+            if(imageLocationIndex == IMAGE_TOP_LEFT){
+                mPhotoView.setImageBitmap(bitmap);
+            }
+            else{
+                images.add(imageLocationIndex, bitmap);
+                imageGriveViewAdapter.notifyDataSetChanged();
+            }
+            incrementImageLocationIndex();
         }
     }
 
-
-    private int incrementImageLocationIndex(){
+    /**
+     * Determines the next location that the new taken image should go.
+     */
+    private void incrementImageLocationIndex(){
         if(imageLocationIndex == IMAGE_CONTAINER_LAST)
             imageLocationIndex = IMAGE_TOP_LEFT;
         else
             imageLocationIndex++;
-        return imageLocationIndex;
     }
+
+
+
+
+
+
+
+
+
+//    private void updatePhotoView() {
+//        if (mPhotoFile == null || !mPhotoFile.exists()) {
+//            mPhotoView.setImageDrawable(null);
+//        } else {
+//            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+//            mPhotoView.setImageBitmap(bitmap);
+//        }
+//    }
 }
