@@ -66,11 +66,6 @@ public class CrimeFragment extends Fragment {
      * index form when determining where the next captured picture should go
      */
     private final int IMAGE_CONTAINER_LAST = 2;
-
-    /**
-     * The maximum number of pictures allowed for a crime report
-     */
-    private final int MAX_NUM_IMAGES = 4;
     //endregion
 
     //region UI instances
@@ -223,6 +218,8 @@ public class CrimeFragment extends Fragment {
         mPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Uri uri = Uri.fromFile(mPhotoFile);
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                 startActivityForResult(captureImage, REQUEST_PHOTO);
             }
         });
@@ -330,10 +327,21 @@ public class CrimeFragment extends Fragment {
 
 
     private void showSavedPictures(){
-        while(mPhotoFile != null && mPhotoFile.exists()){
-            displayImage(mPhotoFile);
-            mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime, imageLocationIndex);
+        for(int i = -1; i <= IMAGE_CONTAINER_LAST; i++ ){
+            if(mPhotoFile != null && mPhotoFile.exists()){
+//                break;
+                displayImage(mPhotoFile);
+                mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime, imageLocationIndex);
+            }
+//            else{
+//                displayImage(mPhotoFile);
+//                mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime, imageLocationIndex);
+//            }
         }
+//        while(mPhotoFile != null && mPhotoFile.exists()){
+//            displayImage(mPhotoFile);
+//            mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime, imageLocationIndex);
+//        }
     }
 
     private void showNewImage(){
@@ -358,7 +366,7 @@ public class CrimeFragment extends Fragment {
             mPhotoView.setImageBitmap(bitmap);
         }
         else{
-            images.add(imageLocationIndex, bitmap);
+            images.add(bitmap);
             imageGridViewAdapter.notifyDataSetChanged();
         }
         incrementImageLocationIndex();

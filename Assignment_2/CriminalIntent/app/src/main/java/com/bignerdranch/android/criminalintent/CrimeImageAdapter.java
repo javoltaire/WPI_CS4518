@@ -102,13 +102,14 @@ public class CrimeImageAdapter extends ArrayAdapter<Bitmap> {
             LayoutInflater inflater = ((Activity) this.getContext()).getLayoutInflater();
             newView = inflater.inflate(mLayoutResource, viewGroup, false);
 
+            Bitmap bitmap = this.getItem(i);
+
             // Updating the image.
             imageView = (ImageView)newView.findViewById(R.id.crime_image_view_item);
-
-//            imageView = new ImageView(this.getContext());
             imageView.setLayoutParams(new GridView.LayoutParams(400, 400));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setImageBitmap(this.getItem(i));
+            imageView.setImageBitmap(bitmap);
+
             return imageView;
         }
         else{
