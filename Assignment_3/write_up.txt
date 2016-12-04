@@ -1,0 +1,51 @@
+3.1.3 (15 points) Explain the data stored in Firebase Database. First, use the PlayChat app in your Android device
+      to perform a few tasks. Note down the tasks. Then go to your app’s Firebase database, and take a screenshot
+      similar to Figure 1(c). You should expand all the tab by clicking the “+” sign and take multiple screenshots
+      if necessary. Explain these screenshots by correlating them with the actions your performed earlier. Write
+      down your explanation.
+      After switching between a few of the channels and sending a single chat message to each one of them, the
+      database was broken into two tabs, channels and inbox. the channels tabs stores the individual channels like
+      books, game, sports, etc. the sub tabs such as books, game, etc each stores chat messages (time, message, and
+      the sender of the message). The inbox stores the connected devices and logs for each of those devices. each
+      log instance contains the type e.g. Signed In or Switching channel to 'books', a tag (device), and the time
+      at which the event happened.
+      
+3.2.1 (10 points) First find out how servlets are saving client data currently. Write down your finding by referencing
+      the servlet code.
+      
+      String loggerKey = IBX + "/" + inbox + "/logs";
+      purger.registerBranch(loggerKey);
+      firebase.child(loggerKey).addChildEventListener(new ChildEventListener() {
+      public void onChildAdded(DataSnapshot snapshot, String prevKey) {
+        if (snapshot.exists()) {
+          LogEntry entry = snapshot.getValue(LogEntry.class);
+          logs.add(entry);
+        }
+      }
+      
+      The function above is part of the initLogger() method. Nothing is being saved to google cloud initially. Basically
+      a listener is added to logs child and listens for when a child is added to fierebases and then loads that child
+      in memory for use
+      
+3.2.2 (20 Points) Explain the steps you need to take to allow servlets to save data into Google Storage.
+      In order to write, we need to perform a post request so the doPost() Method is where the saving will be happening. Assumming
+      that we know the name of the file, first we need to get the default GcsFileOption instance. then we create a GcsFileName
+      instance using the file name and the bucket name. Then we create a GcsOutputChannel using the file name and GcsFileOption.
+      While looping through the log entries and writing them to the response object, we also write it to the file using a PrintWriter
+      object. And lastly, we close the writer and the output channel.
+3.3.1 (10 points) First figure out how client-side workload is being distributed to Servlets currently
+      public void onChildAdded(DataSnapshot snapshot, String prevKey) {
+        firebase.child(IBX + "/" + snapshot.getValue()).runTransaction(new Transaction.Handler() {
+          public Transaction.Result doTransaction(MutableData currentData) {
+            if (currentData.getValue() == null) { currentData.setValue(inbox); }
+            return Transaction.success(currentData);
+          }
+
+          public void onComplete(DatabaseError error, boolean committed, DataSnapshot snapshot) {}
+        });
+        firebase.child(REQLOG).removeValue();
+      }
+      
+      The above snippet is the code that gets executed when a log child is added to the database. By sending back the inbox ID and a
+      Transaction object, then the client will know which servlet to send requests to consecutively and Only one instance of a servlet
+      will reply.

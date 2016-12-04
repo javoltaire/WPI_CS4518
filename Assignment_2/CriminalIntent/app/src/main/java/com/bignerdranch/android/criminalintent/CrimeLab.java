@@ -19,6 +19,11 @@ import java.util.UUID;
 public class CrimeLab {
     private static CrimeLab sCrimeLab;
 
+    /**
+     * The name of the folder inside the public folder that will contain all the crime pictures.
+     */
+    private final String CRIME_LAB_FOLDER = "/Crime Lab";
+
     private Context mContext;
     private SQLiteDatabase mDatabase;
 
@@ -81,7 +86,7 @@ public class CrimeLab {
      * @param index The index that identifies which picture to get.
      * @return The picture if it exits, otherwise null;
      */
-    public File getPhotoFile(Crime crime, int index) {
+    public File getPhotoFile2(Crime crime, int index) {
         File externalFilesDir = mContext
                 .getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -124,5 +129,21 @@ public class CrimeLab {
         );
 
         return new CrimeCursorWrapper(cursor);
+    }
+
+    /**
+     * Grabs one of the images associated for a given crime
+     * @param crime The crime for which, this method needs to get the picture for
+     * @param index The index that identifies which picture to get.
+     * @return The picture if it exits, otherwise null;
+     */
+    public File getPhotoFile(Crime crime, int index) {
+        File folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File file = new File(folder + CRIME_LAB_FOLDER, crime.getPhotoFilename(index));
+
+        // Make sure the folder exists.
+        folder.mkdirs();
+
+        return file;
     }
 }

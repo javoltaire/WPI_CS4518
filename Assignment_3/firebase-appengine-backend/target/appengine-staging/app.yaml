@@ -1,0 +1,38 @@
+runtime: java7
+vm: True
+manual_scaling:
+  instances: 3
+inbound_services:
+- warmup
+threadsafe: True
+auto_id_policy: default
+health_check:
+  enable_health_check: True
+api_version: '1.0'
+handlers:
+- url: (/.*)
+  static_files: __static__\1
+  upload: __NOT_USED__
+  require_matching_file: True
+  login: optional
+  secure: optional
+- url: /
+  script: unused
+  login: optional
+  secure: optional
+- url: /.*/
+  script: unused
+  login: optional
+  secure: optional
+- url: /_ah/.*
+  script: unused
+  login: optional
+  secure: optional
+- url: .*\.jsp
+  script: unused
+  login: optional
+  secure: optional
+- url: /printLogs
+  script: unused
+  login: optional
+  secure: optional

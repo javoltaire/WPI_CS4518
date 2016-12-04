@@ -2,20 +2,28 @@ package com.bignerdranch.android.criminalintent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.Manifest;
 
 import java.util.List;
 import java.util.UUID;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
 public class CrimePagerActivity extends AppCompatActivity {
+    //region Constants
     private static final String EXTRA_CRIME_ID =
             "com.bignerdranch.android.criminalintent.crime_id";
 
+    //endregion
+
+    //region UI Instance variables
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
 
@@ -24,7 +32,9 @@ public class CrimePagerActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_CRIME_ID, crimeId);
         return intent;
     }
+    //endregion
 
+    //region Overridden Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +52,8 @@ public class CrimePagerActivity extends AppCompatActivity {
             @Override
             public Fragment getItem(int position) {
                 Crime crime = mCrimes.get(position);
-                return CrimeFragment.newInstance(crime.getId());
+                CrimeFragment fragment = CrimeFragment.newInstance(crime.getId());
+                return fragment;
             }
 
             @Override
@@ -74,4 +85,5 @@ public class CrimePagerActivity extends AppCompatActivity {
             }
         }
     }
+    //endregion
 }
