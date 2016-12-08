@@ -19,12 +19,13 @@ public class ActivityBaseHelper extends SQLiteOpenHelper {
     //region Types
     private static final String TEXT = " TEXT";
     private static final String INTEGER = " INTEGER";
-    private static final String TIMESTAMP = " TIMESTAMP";
+    private static final String DATETIME = " DATETIME";
     //endregion
 
     //region Constraints
     private static final String NOT_NULL = " NOT NULL";
     private static final String DEFAULT = " DEFAULT";
+    private static final String CURRENT_TIMESTAMP = " CURRENT_TIMESTAMP";
     //endregion
 
     public ActivityBaseHelper(Context context){
@@ -33,16 +34,11 @@ public class ActivityBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        Log.e(ActivityRecognizedService.TAG, "CREATE TABLE " + ActivityDbSchema.ActivityTable.NAME + "(" +
-                ActivityDbSchema.ActivityTable.Cols.ID + INTEGER + " PRIMARY KEY AUTOINCREMENT" + COMMA +
-                ActivityDbSchema.ActivityTable.Cols.ACTIVITY + TEXT + COMMA +
-                ActivityDbSchema.ActivityTable.Cols.CONFIDENCE + INTEGER + ")");
-
-
         sqLiteDatabase.execSQL("CREATE TABLE " + ActivityDbSchema.ActivityTable.NAME + "(" +
                 ActivityDbSchema.ActivityTable.Cols.ID + INTEGER + " PRIMARY KEY AUTOINCREMENT" + COMMA +
                 ActivityDbSchema.ActivityTable.Cols.ACTIVITY + TEXT + COMMA +
-                ActivityDbSchema.ActivityTable.Cols.CONFIDENCE + INTEGER + ")"
+                ActivityDbSchema.ActivityTable.Cols.CONFIDENCE + INTEGER + COMMA +
+                ActivityDbSchema.ActivityTable.Cols.TIMESTAMP + DATETIME + DEFAULT + CURRENT_TIMESTAMP + ")"
         );
     }
 

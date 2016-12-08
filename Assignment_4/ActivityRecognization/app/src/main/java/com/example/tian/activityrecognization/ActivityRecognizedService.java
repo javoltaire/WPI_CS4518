@@ -46,7 +46,6 @@ public class ActivityRecognizedService extends IntentService {
     private void handleDetectedActivities(List<DetectedActivity> probableActivities) {
         mDbHelper = new ActivityBaseHelper(getApplicationContext());
         db = mDbHelper.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + ActivityDbSchema.ActivityTable.NAME);
         for( DetectedActivity activity : probableActivities ) {
             ContentValues values = new ContentValues();
             String act = null;
@@ -110,7 +109,7 @@ public class ActivityRecognizedService extends IntentService {
             }
             if(act != null){
                 values.put(ActivityDbSchema.ActivityTable.Cols.ACTIVITY, act);
-//                values.put(ActivityDbSchema.ActivityTable.Cols.CONFIDENCE, conf);
+                values.put(ActivityDbSchema.ActivityTable.Cols.CONFIDENCE, conf);
                 db.insert(ActivityDbSchema.ActivityTable.NAME, null, values);
             }
         }
