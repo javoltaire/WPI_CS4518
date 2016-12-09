@@ -3,6 +3,6 @@
         id: integer
         activity: text
         confidence: integer
-        timestamp: integer
+        timestamp: datetime
         
         

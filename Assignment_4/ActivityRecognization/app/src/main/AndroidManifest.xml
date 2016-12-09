@@ -19,6 +19,8 @@
         </activity>
 
         <service android:name=".ActivityRecognizedService" />
+
+        <activity android:name=".activities.SummaryActivity"></activity>
     </application>
 
 </manifest>

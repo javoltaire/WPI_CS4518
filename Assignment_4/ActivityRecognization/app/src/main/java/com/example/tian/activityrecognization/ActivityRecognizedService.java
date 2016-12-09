@@ -13,6 +13,7 @@ import com.example.tian.activityrecognization.database.ActivityDbSchema;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,8 +49,8 @@ public class ActivityRecognizedService extends IntentService {
         db = mDbHelper.getWritableDatabase();
         for( DetectedActivity activity : probableActivities ) {
             ContentValues values = new ContentValues();
-            String act = null;
-            int conf = 0;
+            String act = null;              // Will store the activity name
+            int conf = 0;                   // Will store the confidence value
             switch( activity.getType() ) {
                 case DetectedActivity.IN_VEHICLE: {
                     Log.e(TAG, "In Vehicle: " + activity.getConfidence() );
@@ -107,9 +108,12 @@ public class ActivityRecognizedService extends IntentService {
                     break;
                 }
             }
-            if(act != null){
+            if(act != null && conf >=75){
+                // Add to the content value and insert in database only if value is above 75
                 values.put(ActivityDbSchema.ActivityTable.Cols.ACTIVITY, act);
                 values.put(ActivityDbSchema.ActivityTable.Cols.CONFIDENCE, conf);
+                long timeStamp = (new Date().getTime())/1000;
+                values.put(ActivityDbSchema.ActivityTable.Cols.TIMESTAMP, timeStamp);
                 db.insert(ActivityDbSchema.ActivityTable.NAME, null, values);
             }
         }

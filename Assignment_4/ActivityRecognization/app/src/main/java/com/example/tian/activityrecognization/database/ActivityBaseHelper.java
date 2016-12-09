@@ -38,7 +38,7 @@ public class ActivityBaseHelper extends SQLiteOpenHelper {
                 ActivityDbSchema.ActivityTable.Cols.ID + INTEGER + " PRIMARY KEY AUTOINCREMENT" + COMMA +
                 ActivityDbSchema.ActivityTable.Cols.ACTIVITY + TEXT + COMMA +
                 ActivityDbSchema.ActivityTable.Cols.CONFIDENCE + INTEGER + COMMA +
-                ActivityDbSchema.ActivityTable.Cols.TIMESTAMP + DATETIME + DEFAULT + CURRENT_TIMESTAMP + ")"
+                ActivityDbSchema.ActivityTable.Cols.TIMESTAMP + INTEGER + ")"
         );
     }
 
@@ -46,9 +46,4 @@ public class ActivityBaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
-
-
-
-//
-//    ActivityDbSchema.ActivityTable.Cols.TIMESTAMP + TIMESTAMP + DEFAULT + ")"
 }
